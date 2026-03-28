@@ -1,3 +1,5 @@
+import type {DiaryEntry} from "~/types";
+
 const MOCK_ENTRIES: DiaryEntry[] = [
   {
     id: "1",
