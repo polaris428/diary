@@ -10,6 +10,7 @@
 
 - `prompts/base-agent.md`: 기본 개발 작업용 AI 에이전트 프롬프트
 - `prompts/code-review-agent.md`: 코드 리뷰용 AI 에이전트 프롬프트
+- `prompts/logging-rules.md`: AI 작업 및 리뷰 로그 공통 작성 규칙
 
 ## 규칙
 
