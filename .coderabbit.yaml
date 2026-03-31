@@ -50,7 +50,7 @@ reviews:
   # 모노레포를 사용하는 프로젝트였기 때문에 각 분야마다 다른 인스트럭션을 작성했습니다.
   path_instructions:
     - path: frontend/**
-      # 최대 2,000자까지 작성 가능합니다.
+      # 최대 2,0000자까지 작성 가능합니다.
       instructions: |
         1. React(Typescript) 팀 코드 컨벤션(docs/fe-code-convention.md) 및 공식 스타일 가이드(Biome, React/TS best practices)를 우선적으로 반영하여, 가독성·안정성(Null/에러 처리)·테스트/유지보수 용이성·브라우저/접근성 이슈 등을 검토해주세요.
         2. 최신 React/TypeScript 트렌드, JSDoc·Storybook 등 문서화, 팀 스타일 통일성도 함께 확인해 주세요.
