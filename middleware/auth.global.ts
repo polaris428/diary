@@ -1,6 +1,6 @@
 export default defineNuxtRouteMiddleware((to) => {
   const authStore = useAuthStore();
-  const isPublicRoute = ["/", "/auth/callback"].includes(to.path);
+  const isPublicRoute = ["/", "/auth/callback", "/gallery", "/gallery-test"].includes(to.path);
 
   if (!authStore.isLoggedIn && !isPublicRoute) {
     return navigateTo("/");
