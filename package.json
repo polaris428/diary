@@ -11,6 +11,14 @@
   "dependencies": {
     "@nuxtjs/supabase": "^1.5.0",
     "@pinia/nuxt": "^0.11.2",
-    "nuxt": "^3.17.4"
+    "@tresjs/cientos": "^5.7.0",
+    "@tresjs/core": "^5.8.0",
+    "@tresjs/nuxt": "^5.6.0",
+    "gsap": "^3.15.0",
+    "nuxt": "^3.17.4",
+    "three": "^0.184.0"
+  },
+  "devDependencies": {
+    "@types/three": "^0.184.0"
   }
 }

@@ -3,7 +3,7 @@ import { defineNuxtConfig } from "nuxt/config";
 export default defineNuxtConfig({
   compatibilityDate: "2026-03-29",
   devtools: { enabled: true },
-  modules: [],
+  modules: ["@tresjs/nuxt", "@nuxtjs/supabase", "@pinia/nuxt"],
   imports: {
     dirs: ["stores"],
     presets: [

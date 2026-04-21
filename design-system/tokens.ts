@@ -1,23 +1,25 @@
 export const tokens = {
   color: {
     primary: {
-      50: "#f6eee6",
-      100: "#ebd9c8",
-      300: "#c79e77",
-      600: "#8f5f3a",
-      900: "#4b2e1f"
+      900: "#121212", // Deep Black/Accent
+      600: "#333333",
+      default: "#121212"
     },
     neutral: {
-      0: "#ffffff",
-      100: "#f7f5f2",
-      200: "#ece7e1",
-      500: "#8e847b",
-      700: "#4e4741",
-      900: "#1e1a17"
+      0: "#ffffff",   // Pure White (Wall)
+      100: "#fafafa", // Off White
+      200: "#f0f0f0", // Light Grey (Floor/Shadow)
+      500: "#8e8e8e",
+      900: "#121212"
+    },
+    gallery: {
+      wall: "#ffffff",
+      floor: "#fdfdfd",
+      accent: "#003366" // Deep Blue subtle accent
     },
     semantic: {
-      error: "#d84f4f",
-      success: "#2f9a62"
+      error: "#ff4d4d",
+      success: "#22c55e"
     }
   },
   font: {
