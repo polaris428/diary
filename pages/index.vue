@@ -1,8 +1,20 @@
 <script setup lang="ts">
 const authStore = useAuthStore();
+const route = useRoute();
+const errorMessage = ref("");
+
+// URL 에러 파라미터 처리
+if (route.query.error) {
+  errorMessage.value = "로그인 중 오류가 발생했습니다. 다시 시도해 주세요.";
+}
 
 const handleSignIn = async () => {
-  await authStore.signInWithGoogle();
+  try {
+    await authStore.signInWithGoogle();
+  } catch (error) {
+    console.error(error);
+    errorMessage.value = "구글 로그인 창을 여는 데 실패했습니다.";
+  }
 };
 </script>
 
@@ -11,9 +23,13 @@ const handleSignIn = async () => {
     <p class="hero__eyebrow">Private Journal</p>
     <h1>하루를 남기는 가장 단단한 시작점</h1>
     <p class="hero__description">
-      Nuxt, Pinia, Supabase 구조 위에 일기 앱의 첫 골격을 올려두었습니다.
+      당신의 감정은 하나의 예술 작품입니다.<br />
+      'The Frame' 갤러리에서 당신의 기록을 전시해 보세요.
     </p>
-    <BaseButton size="lg" @click="handleSignIn">Google로 시작하기</BaseButton>
+    <div class="auth-box">
+      <BaseButton size="lg" @click="handleSignIn">Google로 시작하기</BaseButton>
+      <p v-if="errorMessage" class="error-msg">{{ errorMessage }}</p>
+    </div>
   </section>
 </template>
 
@@ -46,5 +62,18 @@ const handleSignIn = async () => {
   color: var(--color-neutral-700);
   font-size: 18px;
   line-height: 1.7;
+}
+
+.auth-box {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.error-msg {
+  color: #e53935;
+  font-size: 14px;
+  margin: 0;
 }
 </style>
