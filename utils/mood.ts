@@ -1,11 +1,5 @@
-export const DIARY_MOODS = [
-  "joy",
-  "calm",
-  "complex",
-  "tired",
-  "anxious",
-  "sad"
-] as const;
+import { type DiaryMood, type MoodMeta } from "~/types";
+
 
 const MOOD_META: Record<DiaryMood | "unknown", MoodMeta> = {
   joy: { label: "기쁨", emoji: "😊", background: "#fff0b8", color: "#8a6700" },

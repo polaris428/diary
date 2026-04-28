@@ -1,3 +1,12 @@
+export const DIARY_MOODS = [
+  "joy",
+  "calm",
+  "complex",
+  "tired",
+  "anxious",
+  "sad"
+] as const;
+
 export type DiaryMood = typeof DIARY_MOODS[number];
 
 export type DiaryEntry = {

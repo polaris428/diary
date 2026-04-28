@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { DIARY_MOODS, type DiaryMood } from "~/types";
+
 const modelValue = defineModel<DiaryMood | null>({ default: null });
 const moods = DIARY_MOODS;
 

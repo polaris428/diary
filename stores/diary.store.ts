@@ -1,8 +1,8 @@
-import type {DiaryEntry} from "~/types";
+import type {DiaryEntry, DiaryMood} from "~/types";
 
 export const useDiaryStore = defineStore("diary", () => {
   const entries = ref<DiaryEntry[]>([]);
-  const supabase = useSupabaseClient();
+  const supabase = useSupabaseClient<any>();
   const user = useSupabaseUser();
 
   const fetchLatestEntries = async () => {
@@ -37,11 +37,11 @@ export const useDiaryStore = defineStore("diary", () => {
     if (data) {
       // 서버에서 반환된 데이터(id, created_at 포함)를 스토어에 추가
       entries.value = [{
-        id: data.id,
-        title: data.title,
-        content: data.content,
-        mood: data.mood,
-        createdAt: data.created_at
+        id: data.id as string,
+        title: data.title as string,
+        content: data.content as string,
+        mood: data.mood as DiaryMood | null,
+        createdAt: data.created_at as string
       }, ...entries.value];
     }
 
