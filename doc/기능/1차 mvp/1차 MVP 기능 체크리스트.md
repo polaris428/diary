@@ -26,14 +26,15 @@
 
 - [x] content 1자 이상일 때만 저장 버튼이 활성화된다
   `pages/write.vue`에서 `!content.trim()` 기준으로 버튼을 비활성화합니다.
-- [-] 저장 성공 시 row 생성 후 `/home` 으로 이동한다
-  `stores/diary.store.ts`에서 로컬 메모리 배열에는 추가되고 `pages/write.vue`에서 `/home` 이동도 하지만, DB row 생성은 없습니다.
-- [ ] 저장 실패 시 입력값이 사라지지 않는다
-  실패 분기와 에러 처리 자체가 구현돼 있지 않습니다.
-- [ ] 미저장 이탈 시 confirm 이 노출된다
-  `beforeunload`, `onBeforeRouteLeave`, `isDirty` 처리가 없습니다.
-- [-] mood 미선택 저장 시 DB에 null 로 저장된다
-  화면과 로컬 store에서는 `null` 전달이 가능하지만 DB 저장 경로가 없습니다.
+- [x] 저장 성공 시 row 생성 후 `/home` 으로 이동한다
+  `diary.store.ts`에서 `supabase.from('entries').insert()` 호출 후 성공 시 이동합니다.
+- [x] 저장 실패 시 입력값이 사라지지 않는다
+  `pages/write.vue`의 `try-catch`에서 실패 시 에러 토스트만 띄우고 상태는 유지됩니다.
+- [x] 미저장 이탈 시 confirm 이 노출된다
+  `isDirty` 상태와 `onBeforeRouteLeave`, `beforeunload` 이벤트를 통해 방어합니다.
+- [x] mood 미선택 저장 시 DB에 null 로 저장된다
+  선택하지 않은 경우 `null` 값이 Supabase 테이블의 `mood` 컬럼에 정상 기록됩니다.
+
 
 ## 기능 03 — 일기 목록
 

@@ -1,35 +1,49 @@
 import type {DiaryEntry} from "~/types";
 
-const MOCK_ENTRIES: DiaryEntry[] = [
-  {
-    id: "1",
-    title: "첫 기록",
-    content: "Nuxt 프로젝트 골격을 만들고 화면 흐름을 정리했다.",
-    mood: "joy",
-    createdAt: "2026-03-29"
-  }
-];
-
 export const useDiaryStore = defineStore("diary", () => {
   const entries = ref<DiaryEntry[]>([]);
+  const supabase = useSupabaseClient();
+  const user = useSupabaseUser();
 
   const fetchLatestEntries = async () => {
-    entries.value = MOCK_ENTRIES;
+    // 기능 03, 04 구현 시 수정 예정
   };
 
   const fetchEntries = async () => {
-    entries.value = MOCK_ENTRIES;
+    // 기능 03, 04 구현 시 수정 예정
   };
 
   const createEntry = async (payload: Omit<DiaryEntry, "id" | "createdAt">) => {
-    entries.value = [
-      {
-        id: crypto.randomUUID(),
-        createdAt: new Date().toISOString(),
-        ...payload
-      },
-      ...entries.value
-    ];
+    if (!user.value) {
+      throw new Error("로그인이 필요합니다.");
+    }
+
+    const { data, error } = await supabase
+      .from("entries")
+      .insert({
+        title: payload.title,
+        content: payload.content,
+        mood: payload.mood,
+        user_id: user.value.id
+      })
+      .select()
+      .single();
+
+    if (error) {
+      console.error("Supabase insert error:", error);
+      throw new Error("일기 저장에 실패했습니다.");
+    }
+
+    if (data) {
+      // 서버에서 반환된 데이터(id, created_at 포함)를 스토어에 추가
+      entries.value = [{
+        id: data.id,
+        title: data.title,
+        content: data.content,
+        mood: data.mood,
+        createdAt: data.created_at
+      }, ...entries.value];
+    }
 
     useToast().show("일기가 저장되었습니다.", "success");
   };
