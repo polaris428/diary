@@ -22,4 +22,6 @@ export type MoodMeta = {
   emoji: string;
   background: string;
   color: string;
+  frameType: 'Classic Gold' | 'Modern Black' | 'Natural Wood' | 'Floating Glass';
+  canvasColor: string;
 };

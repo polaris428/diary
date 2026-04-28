@@ -8,6 +8,7 @@ const props = defineProps<{
   position: [number, number, number]
   type?: 'Classic Gold' | 'Modern Black' | 'Natural Wood' | 'Floating Glass'
   thumbnail?: string
+  canvasColor?: string  // 감정 배경색
 }>()
 
 const width = 1.2
@@ -27,6 +28,11 @@ const getMaterialProps = () => {
       return { color: '#121212', roughness: 0.6, metalness: 0.3 }
   }
 }
+
+// 썸네일이 없을 때: 감정 canvasColor, 그것도 없으면 크림색 기본값
+const resolvedCanvasColor = computed(() =>
+  props.thumbnail ? '#ffffff' : (props.canvasColor ?? '#f5f0eb')
+)
 </script>
 
 <template>
@@ -43,11 +49,10 @@ const getMaterialProps = () => {
        <TresMeshPhysicalMaterial v-bind="getMaterialProps()" :transmission="0.9" :ior="1.5" />
     </TresMesh>
 
-    <!-- Canvas (Thumbnail) -->
-    <!-- 액자 가장자리(0.2)를 제외한 영역 캔버스 -->
+    <!-- Canvas (Thumbnail / 감정 배경) -->
     <TresMesh :position="[0, 0, depth / 2 + 0.01]">
       <TresPlaneGeometry :args="[width - 0.2, height - 0.2]" />
-      <TresMeshStandardMaterial :color="thumbnail ? '#ffffff' : '#e0e0e0'" />
+      <TresMeshStandardMaterial :color="resolvedCanvasColor" />
     </TresMesh>
   </TresGroup>
 </template>

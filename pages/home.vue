@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import TheGallery from '~/features/gallery/components/TheGallery.vue'
+
 const diaryStore = useDiaryStore();
 
 await callOnce("home:bootstrap", async () => {
@@ -7,65 +9,94 @@ await callOnce("home:bootstrap", async () => {
 </script>
 
 <template>
-  <div class="page">
-    <AppHeader title="홈" />
-    <section class="panel">
-      <p class="panel__label">오늘의 질문</p>
-      <DiaryQuestionBanner :question="useQuestion().question.value" />
-    </section>
-    <section class="panel">
-      <div class="panel__row">
-        <h2>최근 기록</h2>
-        <NuxtLink to="/write">새 일기 쓰기</NuxtLink>
+  <div class="home">
+    <!-- 3D 갤러리 (WebGL은 클라이언트 전용) -->
+    <ClientOnly fallback-tag="div" fallback="갤러리를 불러오는 중...">
+      <TheGallery :entries="diaryStore.entries" />
+    </ClientOnly>
+
+    <!-- UI 오버레이: 갤러리 위에 떠있는 버튼들 -->
+    <div class="ui-overlay">
+      <div class="ui-overlay__header">
+        <h1 class="ui-overlay__title">The Frame</h1>
+        <p class="ui-overlay__hint">드래그하여 공간을 둘러보세요.</p>
       </div>
+
       <BaseEmptyState
         v-if="diaryStore.entries.length === 0"
-        message="아직 작성된 일기가 없습니다."
-        action-text="첫 일기 쓰기"
+        message="아직 전시된 기록이 없습니다."
+        action-text="첫 기록 남기기"
         @action="navigateTo('/write')"
       />
-      <div v-else class="card-list">
-        <DiaryCard
-          v-for="entry in diaryStore.entries"
-          :key="entry.id"
-          :entry="entry"
-        />
-      </div>
-    </section>
+
+      <NuxtLink to="/write" class="fab" aria-label="새 일기 쓰기">
+        +
+      </NuxtLink>
+    </div>
   </div>
 </template>
 
 <style scoped>
-.page {
-  display: grid;
-  gap: 20px;
+.home {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
 }
 
-.panel {
-  display: grid;
-  gap: 16px;
-  padding: 20px;
-  background: rgba(255, 255, 255, 0.82);
-  border: 1px solid rgba(143, 95, 58, 0.12);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
-  backdrop-filter: blur(16px);
+.ui-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
-.panel__label,
-.panel h2 {
+.ui-overlay__header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ui-overlay__title {
   margin: 0;
+  font-family: var(--font-sans);
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #121212;
+  letter-spacing: -0.02em;
 }
 
-.panel__row {
+.ui-overlay__hint {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #666;
+}
+
+/* FAB: 새 일기 쓰기 버튼 */
+.fab {
+  pointer-events: all;
+  align-self: flex-end;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--color-primary-900);
+  color: #fff;
+  font-size: 1.75rem;
+  line-height: 1;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 16px;
+  justify-content: center;
+  box-shadow: var(--shadow-md);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  text-decoration: none;
 }
 
-.card-list {
-  display: grid;
-  gap: 12px;
+.fab:hover {
+  transform: scale(1.08);
+  box-shadow: 0 18px 36px rgba(75, 46, 31, 0.22);
 }
 </style>

@@ -6,7 +6,29 @@ export const useDiaryStore = defineStore("diary", () => {
   const user = useSupabaseUser();
 
   const fetchLatestEntries = async () => {
-    // 기능 03, 04 구현 시 수정 예정
+    if (!user.value) return;
+
+    const { data, error } = await supabase
+      .from("entries")
+      .select("id, title, mood, created_at")
+      .eq("user_id", user.value.id)
+      .order("created_at", { ascending: false })
+      .limit(20);
+
+    if (error) {
+      console.error("fetchLatestEntries error:", error);
+      return;
+    }
+
+    if (data) {
+      entries.value = data.map((row: any) => ({
+        id: row.id as string,
+        title: row.title as string,
+        content: "",          // 목록에서는 본문 미조회 (성능 최적화)
+        mood: row.mood as DiaryMood | null,
+        createdAt: row.created_at as string,
+      }));
+    }
   };
 
   const fetchEntries = async () => {

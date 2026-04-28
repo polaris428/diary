@@ -6,13 +6,26 @@
 import { OrbitControls } from '@tresjs/cientos'
 import BaseFrame from '~/shared/components/base/BaseFrame.vue'
 import { useGalleryLayout, type GalleryItem } from '~/features/gallery/composables/useGalleryLayout'
+import type { DiaryEntry } from '~/types'
 
 const props = defineProps<{
-  items: GalleryItem[]
+  entries: DiaryEntry[]
 }>()
 
+// DiaryEntry → GalleryItem 변환 (mood에서 frameType, canvasColor 추출)
+const toGalleryItem = (entry: DiaryEntry): GalleryItem => {
+  const meta = getMoodMeta(entry.mood)
+  return {
+    id: entry.id,
+    title: entry.title,
+    mood: entry.mood,
+    type: meta.frameType,
+    canvasColor: meta.canvasColor,
+  }
+}
+
 const { calculateLayout } = useGalleryLayout()
-const placedItems = calculateLayout(props.items)
+const placedItems = computed(() => calculateLayout(props.entries.map(toGalleryItem)))
 </script>
 
 <template>
@@ -38,13 +51,14 @@ const placedItems = calculateLayout(props.items)
         <TresMeshStandardMaterial color="#ffffff" />
       </TresMesh>
 
-      <!-- Frames: 계산된 좌표에 따라 렌더링 -->
+      <!-- Frames: 감정 스타일이 적용된 실제 일기 데이터 렌더링 -->
       <BaseFrame
         v-for="item in placedItems"
         :key="item.id"
         :position="item.position"
         :type="item.type"
         :thumbnail="item.thumbnail"
+        :canvas-color="item.canvasColor"
       />
     </TresCanvas>
   </div>

@@ -2,11 +2,15 @@
  * useGalleryLayout.ts
  * 갤러리 액자들을 '살롱 행(Salon Hang)' 스타일로 배치하는 알고리즘
  */
+import type { DiaryMood } from '~/types'
+
 export interface GalleryItem {
   id: string | number
   title?: string
   thumbnail?: string
+  mood?: DiaryMood | null
   type?: 'Classic Gold' | 'Modern Black' | 'Natural Wood' | 'Floating Glass'
+  canvasColor?: string
 }
 
 export interface PlacedItem extends GalleryItem {
@@ -30,7 +34,7 @@ export const useGalleryLayout = () => {
       const offsetX = (Math.random() - 0.5) * 1.5
       const offsetY = (Math.random() - 0.5) * 1.5
       
-      // 4. 타입이 지정되지 않은 경우 랜덤 타입 부여
+      // 4. 타입이 지정되지 않은 경우 랜덤 타입 부여 (mood에서 이미 지정된 경우 우선)
       const type = item.type || FRAME_TYPES[Math.floor(Math.random() * FRAME_TYPES.length)]
       
       return {
