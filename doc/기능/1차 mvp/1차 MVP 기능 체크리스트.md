@@ -10,16 +10,17 @@
 
 ## 기능 01 — 구글 OAuth 인증
 
-- [ ] 버튼 클릭 시 구글 OAuth 동의 화면으로 이동한다
-  현재 `stores/auth.store.ts`의 `signInWithGoogle()`은 구글 OAuth 대신 로컬 데모 유저를 세팅한 뒤 `/home`으로 이동합니다.
-- [-] 계정 선택 완료 후 세션 생성 → `/home` 으로 이동한다
-  `/home` 이동은 구현돼 있지만 실제 계정 선택, OAuth 콜백 처리, 세션 생성은 없습니다.
-- [ ] OAuth 취소 시 로그인 화면 복귀 + 에러 문구가 표시된다
-  `pages/index.vue`, `pages/auth/callback.vue` 어디에도 취소/실패 쿼리 처리와 인라인 에러 문구가 없습니다.
+- [x] 버튼 클릭 시 구글 OAuth 동의 화면으로 이동한다
+  `supabase.auth.signInWithOAuth`를 통해 정상 이동합니다.
+- [x] 계정 선택 완료 후 세션 생성 → `/home` 으로 이동한다
+  `pages/auth/callback.vue`에서 세션 확인 후 이동을 완벽히 처리합니다.
+- [x] OAuth 취소 시 로그인 화면 복귀 + 에러 문구가 표시된다
+  `callback.vue` 및 `index.vue`에서 쿼리 파라미터를 감지하여 처리합니다.
 - [x] `/auth/callback` 처리 중 "로그인 중..." 상태가 표시된다
   `pages/auth/callback.vue`에 세션 확인 중 안내 문구가 있습니다.
 - [x] 세션 없이 `/home` 직접 접근 시 `/` 로 리다이렉트된다
   `middleware/auth.global.ts`에서 비로그인 사용자의 보호 라우트 접근을 `/`로 보냅니다.
+
 
 ## 기능 02 — 일기 작성
 

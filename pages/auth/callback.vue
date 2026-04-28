@@ -4,6 +4,12 @@
  * 구글 로그인 리다이렉트 처리 및 세션 확인 페이지
  */
 const user = useSupabaseUser();
+const route = useRoute();
+
+// 에러 파라미터가 있으면 즉시 메인 페이지로 리다이렉트
+if (route.query.error) {
+  navigateTo(`/?error=${route.query.error}`);
+}
 
 // 세션이 확인되면 /home으로 이동, 실패 시 에러와 함께 인덱스로 이동
 watch(user, () => {
