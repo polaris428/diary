@@ -1,5 +1,12 @@
 <script setup lang="ts">
+import { computed } from 'vue';
+
 const diaryStore = useDiaryStore();
+
+const isCurrentMonth = computed(() => {
+  const today = new Date();
+  return diaryStore.currentYear === today.getFullYear() && diaryStore.currentMonth === today.getMonth() + 1;
+});
 
 await callOnce("diary:list", async () => {
   await diaryStore.fetchEntries();
@@ -11,9 +18,9 @@ await callOnce("diary:list", async () => {
     <AppHeader title="기록" />
     <section class="panel">
       <DiaryMonthNav
-        :year="2026"
-        :month="3"
-        :disable-next="true"
+        :year="diaryStore.currentYear"
+        :month="diaryStore.currentMonth"
+        :disable-next="isCurrentMonth"
         @prev="diaryStore.goToPreviousMonth()"
         @next="diaryStore.goToNextMonth()"
       />
