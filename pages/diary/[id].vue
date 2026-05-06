@@ -1,18 +1,66 @@
 <script setup lang="ts">
-import type { DiaryEntry } from '~/types';
+import type { DiaryEntry, DiaryMood } from '~/types';
+import { useDiaryWrite } from '~/features/diary-write/composables/useDiaryWrite';
+import DiaryMoodPicker from '~/features/diary-write/components/DiaryMoodPicker.vue';
 
 const route = useRoute();
 const { fetchEntryById } = useDiaryDetail();
+const { updateEntry } = useDiaryWrite();
+const toast = useToast();
 
 const { data: entry, pending: isLoading } = await useAsyncData(
   `diary:detail:${route.params.id}`,
   () => fetchEntryById(String(route.params.id))
 );
 
-const handleEdit = () => {
-  // 실제 수정 모드 전환 또는 페이지 이동은 5번 기능에서 구현
-  window.alert("수정 기능은 곧 준비됩니다!");
+const isEditMode = ref(false);
+const isSubmitting = ref(false);
+const editTitle = ref("");
+const editContent = ref("");
+const editMood = ref<DiaryMood | null>(null);
+
+const startEdit = () => {
+  if (!entry.value) return;
+  editTitle.value = entry.value.title;
+  editContent.value = entry.value.content;
+  editMood.value = entry.value.mood;
+  isEditMode.value = true;
 };
+
+const cancelEdit = () => {
+  isEditMode.value = false;
+};
+
+const saveEdit = async () => {
+  if (isSaveDisabled.value) return;
+  
+  isSubmitting.value = true;
+  try {
+    const updatedData = await updateEntry(String(route.params.id), {
+      title: editTitle.value,
+      content: editContent.value,
+      mood: editMood.value,
+    });
+    
+    if (entry.value && updatedData) {
+      entry.value.title = updatedData.title;
+      entry.value.content = updatedData.content;
+      entry.value.mood = updatedData.mood;
+      // updated_at 트리거 반영 확인을 위해 프론트엔드 상태 갱신
+      entry.value.createdAt = updatedData.created_at; 
+    }
+    
+    isEditMode.value = false;
+  } catch (error: any) {
+    console.error(error);
+  } finally {
+    isSubmitting.value = false;
+  }
+};
+
+const isSaveDisabled = computed(() => {
+  return !editTitle.value.trim() || !editContent.value.trim();
+});
 
 const handleDelete = () => {
   const isConfirmed = window.confirm("정말 삭제할까요?");
@@ -27,19 +75,29 @@ const handleDelete = () => {
   <div class="page">
     <AppHeader title="상세 보기" :show-back="true">
       <template #right v-if="entry">
-        <div class="header-actions">
-          <BaseButton variant="ghost" size="sm" @click="handleEdit">수정</BaseButton>
+        <div class="header-actions" v-if="!isEditMode">
+          <BaseButton variant="ghost" size="sm" @click="startEdit">수정</BaseButton>
           <BaseButton variant="danger" size="sm" @click="handleDelete">삭제</BaseButton>
+        </div>
+        <div class="header-actions" v-else>
+          <BaseButton variant="ghost" size="sm" :disabled="isSubmitting" @click="cancelEdit">취소</BaseButton>
+          <BaseButton variant="primary" size="sm" :disabled="isSaveDisabled || isSubmitting" :loading="isSubmitting" @click="saveEdit">저장</BaseButton>
         </div>
       </template>
     </AppHeader>
     <section class="panel" v-if="entry">
       <div class="panel__row">
-        <h1>{{ entry.title }}</h1>
-        <BaseBadge v-if="entry.mood" :mood="entry.mood" />
+        <h1 v-if="!isEditMode">{{ entry.title }}</h1>
+        <input v-else v-model="editTitle" class="edit-title-input" placeholder="제목을 입력하세요" />
+        
+        <BaseBadge v-if="!isEditMode && entry.mood" :mood="entry.mood" />
       </div>
-      <p class="panel__date">{{ formatDiaryDate(entry.createdAt) }}</p>
-      <BaseTextarea :model-value="entry.content" :readonly="true" />
+      <p class="panel__date" v-if="!isEditMode">{{ formatDiaryDate(entry.createdAt) }}</p>
+      
+      <DiaryMoodPicker v-if="isEditMode" v-model="editMood" />
+      
+      <BaseTextarea v-if="!isEditMode" :model-value="entry.content" :readonly="true" />
+      <BaseTextarea v-else v-model="editContent" :readonly="false" placeholder="본문을 입력하세요" />
     </section>
     <BaseEmptyState
       v-else
@@ -75,6 +133,22 @@ const handleDelete = () => {
 .panel__row h1,
 .panel__date {
   margin: 0;
+}
+
+.edit-title-input {
+  flex: 1;
+  font-size: 24px;
+  font-weight: 700;
+  border: none;
+  border-bottom: 2px solid var(--color-primary-200);
+  padding: 4px 0;
+  outline: none;
+  background: transparent;
+  color: var(--color-neutral-900);
+}
+
+.edit-title-input:focus {
+  border-bottom-color: var(--color-primary-500);
 }
 
 .panel__date {
