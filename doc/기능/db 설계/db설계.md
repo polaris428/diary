@@ -6,6 +6,7 @@
 | --- | --- | --- | --- |
 | `id` | UUID | PK, `DEFAULT gen_random_uuid()` | 고유 식별자 |
 | `user_id` | UUID | `NOT NULL`, FK → `auth.users.id ON DELETE CASCADE` | 소유자 |
+| `title` | TEXT | NULLABLE | 일기 제목 |
 | `content` | TEXT | `NOT NULL`, 길이 ≤ 5000 | 일기 본문 |
 | `mood` | TEXT | NULLABLE, enum 6개 | 감정 값 |
 | `created_at` | TIMESTAMPTZ | `NOT NULL`, `DEFAULT now()` | 작성 시각 |
