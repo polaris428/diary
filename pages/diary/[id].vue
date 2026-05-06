@@ -74,15 +74,17 @@ const handleDelete = () => {
 <template>
   <div class="page">
     <AppHeader title="상세 보기" :show-back="true">
-      <template #right v-if="entry">
-        <div class="header-actions" v-if="!isEditMode">
-          <BaseButton variant="ghost" size="sm" @click="startEdit">수정</BaseButton>
-          <BaseButton variant="danger" size="sm" @click="handleDelete">삭제</BaseButton>
-        </div>
-        <div class="header-actions" v-else>
-          <BaseButton variant="ghost" size="sm" :disabled="isSubmitting" @click="cancelEdit">취소</BaseButton>
-          <BaseButton variant="primary" size="sm" :disabled="isSaveDisabled || isSubmitting" :loading="isSubmitting" @click="saveEdit">저장</BaseButton>
-        </div>
+      <template #right>
+        <template v-if="entry">
+          <div class="header-actions" v-if="!isEditMode">
+            <BaseButton variant="ghost" size="sm" @click="startEdit">수정</BaseButton>
+            <BaseButton variant="danger" size="sm" @click="handleDelete">삭제</BaseButton>
+          </div>
+          <div class="header-actions" v-else>
+            <BaseButton variant="ghost" size="sm" :disabled="isSubmitting" @click="cancelEdit">취소</BaseButton>
+            <BaseButton variant="primary" size="sm" :disabled="isSaveDisabled || isSubmitting" :loading="isSubmitting" @click="saveEdit">저장</BaseButton>
+          </div>
+        </template>
       </template>
     </AppHeader>
     <section class="panel" v-if="entry">

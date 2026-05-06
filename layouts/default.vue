@@ -13,7 +13,7 @@ const showBottomNav = computed(
     <main class="shell__main">
       <slot />
     </main>
-    <LayoutAppBottomNav v-if="showBottomNav" />
+    <AppBottomNav v-if="showBottomNav" />
     <BaseToast />
   </div>
 </template>

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+const router = useRouter();
+
 const props = withDefaults(
   defineProps<{
     title: string;
@@ -8,12 +10,20 @@ const props = withDefaults(
     showBack: false
   }
 );
+
+const handleBack = () => {
+  if (window.history.length > 1) {
+    router.back();
+  } else {
+    navigateTo("/diary");
+  }
+};
 </script>
 
 <template>
   <header class="header">
     <div class="header__left">
-      <BaseButton v-if="props.showBack" variant="ghost" size="sm" @click="navigateTo(-1)">
+      <BaseButton v-if="props.showBack" variant="ghost" size="sm" @click="handleBack">
         뒤로
       </BaseButton>
       <h1>{{ props.title }}</h1>
