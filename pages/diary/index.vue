@@ -9,7 +9,7 @@ const isCurrentMonth = computed(() => {
   return diaryListStore.currentYear === today.getFullYear() && diaryListStore.currentMonth === today.getMonth() + 1;
 });
 
-await callOnce("diary:list", async () => {
+await useAsyncData("diary:list", async () => {
   await diaryListStore.fetchEntries();
 });
 </script>

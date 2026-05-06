@@ -3,6 +3,7 @@ import type { DiaryEntry, DiaryMood } from "~/types";
 
 export const useDiaryListStore = defineStore("diary-list", () => {
   const entries = ref<DiaryEntry[]>([]);
+  const latestEntries = ref<DiaryEntry[]>([]);
   const currentYear = ref(new Date().getFullYear());
   const currentMonth = ref(new Date().getMonth() + 1);
 
@@ -26,7 +27,7 @@ export const useDiaryListStore = defineStore("diary-list", () => {
     }
 
     if (data) {
-      entries.value = data.map((row: any) => ({
+      latestEntries.value = data.map((row: any) => ({
         id: row.id as string,
         title: row.title as string,
         content: "",          // 목록에서는 본문 미조회 (성능 최적화)
@@ -94,6 +95,7 @@ export const useDiaryListStore = defineStore("diary-list", () => {
 
   return {
     entries,
+    latestEntries,
     currentYear,
     currentMonth,
     fetchLatestEntries,
