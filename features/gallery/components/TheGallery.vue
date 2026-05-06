@@ -4,7 +4,7 @@
  * TresJS 캔버스와 전시관 환경, 조명, 액자 목록을 총괄하는 컴포넌트
  */
 import { OrbitControls } from '@tresjs/cientos'
-import BaseFrame from '~/shared/components/base/BaseFrame.vue'
+import BaseFrame from '~/components/base/BaseFrame.vue'
 import { useGalleryLayout, type GalleryItem } from '~/features/gallery/composables/useGalleryLayout'
 import type { DiaryEntry } from '~/types'
 

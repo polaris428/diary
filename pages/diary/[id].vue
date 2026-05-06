@@ -4,7 +4,7 @@ import { useDiaryWrite } from '~/features/diary-write/composables/useDiaryWrite'
 import DiaryMoodPicker from '~/features/diary-write/components/DiaryMoodPicker.vue';
 
 const route = useRoute();
-const { fetchEntryById } = useDiaryDetail();
+const { fetchEntryById, deleteEntry } = useDiaryDetail();
 const { updateEntry } = useDiaryWrite();
 const toast = useToast();
 
@@ -15,6 +15,8 @@ const { data: entry, pending: isLoading } = await useAsyncData(
 
 const isEditMode = ref(false);
 const isSubmitting = ref(false);
+const isDeleteDialogOpen = ref(false);
+
 const editTitle = ref("");
 const editContent = ref("");
 const editMood = ref<DiaryMood | null>(null);
@@ -46,7 +48,6 @@ const saveEdit = async () => {
       entry.value.title = updatedData.title;
       entry.value.content = updatedData.content;
       entry.value.mood = updatedData.mood;
-      // updated_at 트리거 반영 확인을 위해 프론트엔드 상태 갱신
       entry.value.createdAt = updatedData.created_at; 
     }
     
@@ -63,10 +64,19 @@ const isSaveDisabled = computed(() => {
 });
 
 const handleDelete = () => {
-  const isConfirmed = window.confirm("정말 삭제할까요?");
-  if (isConfirmed) {
-    // 실제 삭제 로직은 6번 기능에서 구현
-    window.alert("삭제 로직 연결 대기 중");
+  isDeleteDialogOpen.value = true;
+};
+
+const confirmDelete = async () => {
+  isSubmitting.value = true;
+  try {
+    const success = await deleteEntry(String(route.params.id));
+    if (success) {
+      navigateTo('/diary');
+    }
+  } finally {
+    isSubmitting.value = false;
+    isDeleteDialogOpen.value = false;
   }
 };
 </script>
@@ -106,6 +116,17 @@ const handleDelete = () => {
       message="해당 일기를 찾을 수 없습니다."
       action-text="목록으로 이동"
       @action="navigateTo('/diary')"
+    />
+
+    <BaseDialog
+      :show="isDeleteDialogOpen"
+      title="정말 삭제할까요?"
+      message="한 번 삭제된 일기는 다시 복구할 수 없습니다."
+      confirm-text="삭제"
+      variant="danger"
+      :loading="isSubmitting"
+      @close="isDeleteDialogOpen = false"
+      @confirm="confirmDelete"
     />
   </div>
 </template>

@@ -8,19 +8,15 @@ export default defineNuxtConfig({
     redirect: false, // 커스텀 콜백 처리를 위해 자동 리다이렉트는 끕니다.
   },
   components: [
-    { path: '~/shared/components/base', pathPrefix: false },
-    { path: '~/shared/components/layout', pathPrefix: false },
-    { path: '~/features', pathPrefix: false, pattern: '*/components/**' },
+    { path: '~/components/base', pathPrefix: false },
+    { path: '~/components/layout', pathPrefix: false },
+    { path: '~/features', pathPrefix: false, pattern: '**/components/*.vue' },
     '~/components'
   ],
   imports: {
     dirs: [
-      "stores",
-      "shared/composables",
-      "shared/utils",
-      "features/diary-list/store",
-      "features/diary-detail/composables",
-      "features/diary-write/composables"
+      "features/*/composables",
+      "features/*/store"
     ],
     presets: [
       {

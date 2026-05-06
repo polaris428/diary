@@ -34,7 +34,27 @@ export const useDiaryDetail = () => {
     return null;
   };
 
+  const deleteEntry = async (id: string) => {
+    if (!user.value) return false;
+
+    const { error } = await supabase
+      .from("entries")
+      .delete()
+      .eq("id", id)
+      .eq("user_id", user.value.id);
+
+    if (error) {
+      console.error("deleteEntry error:", error);
+      toast.show("일기 삭제에 실패했습니다.", "error");
+      return false;
+    }
+
+    toast.show("일기가 삭제되었습니다.", "success");
+    return true;
+  };
+
   return {
-    fetchEntryById
+    fetchEntryById,
+    deleteEntry
   };
 };
