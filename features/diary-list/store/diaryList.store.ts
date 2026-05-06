@@ -1,6 +1,7 @@
-import type {DiaryEntry, DiaryMood} from "~/types";
+import { defineStore } from "pinia";
+import type { DiaryEntry, DiaryMood } from "~/types";
 
-export const useDiaryStore = defineStore("diary", () => {
+export const useDiaryListStore = defineStore("diary-list", () => {
   const entries = ref<DiaryEntry[]>([]);
   const currentYear = ref(new Date().getFullYear());
   const currentMonth = ref(new Date().getMonth() + 1);
@@ -67,41 +68,6 @@ export const useDiaryStore = defineStore("diary", () => {
     }
   };
 
-  const createEntry = async (payload: Omit<DiaryEntry, "id" | "createdAt">) => {
-    if (!user.value) {
-      throw new Error("로그인이 필요합니다.");
-    }
-
-    const { data, error } = await supabase
-      .from("entries")
-      .insert({
-        title: payload.title,
-        content: payload.content,
-        mood: payload.mood,
-        user_id: user.value.id
-      })
-      .select()
-      .single();
-
-    if (error) {
-      console.error("Supabase insert error:", error);
-      throw new Error("일기 저장에 실패했습니다.");
-    }
-
-    if (data) {
-      // 서버에서 반환된 데이터(id, created_at 포함)를 스토어에 추가
-      entries.value = [{
-        id: data.id as string,
-        title: data.title as string,
-        content: data.content as string,
-        mood: data.mood as DiaryMood | null,
-        createdAt: data.created_at as string
-      }, ...entries.value];
-    }
-
-    useToast().show("일기가 저장되었습니다.", "success");
-  };
-
   const goToPreviousMonth = () => {
     if (currentMonth.value === 1) {
       currentMonth.value = 12;
@@ -132,7 +98,6 @@ export const useDiaryStore = defineStore("diary", () => {
     currentMonth,
     fetchLatestEntries,
     fetchEntries,
-    createEntry,
     goToPreviousMonth,
     goToNextMonth
   };

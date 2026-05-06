@@ -1,10 +1,15 @@
 <script setup lang="ts">
-const route = useRoute();
-const diaryStore = useDiaryStore();
+import type { DiaryEntry } from '~/types';
 
-const entry = computed(() =>
-  diaryStore.entries.find((item) => item.id === String(route.params.id))
-);
+const route = useRoute();
+const { fetchEntryById } = useDiaryDetail();
+const entry = ref<DiaryEntry | null>(null);
+const isLoading = ref(true);
+
+await callOnce(`diary:detail:${route.params.id}`, async () => {
+  entry.value = await fetchEntryById(String(route.params.id));
+  isLoading.value = false;
+});
 </script>
 
 <template>

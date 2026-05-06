@@ -1,10 +1,11 @@
 <script setup lang="ts">
+import { useDiaryListStore } from '~/features/diary-list/store/diaryList.store';
 import TheGallery from '~/features/gallery/components/TheGallery.vue'
 
-const diaryStore = useDiaryStore();
+const diaryListStore = useDiaryListStore();
 
 await callOnce("home:bootstrap", async () => {
-  await diaryStore.fetchLatestEntries();
+  await diaryListStore.fetchLatestEntries();
 });
 </script>
 
@@ -12,7 +13,7 @@ await callOnce("home:bootstrap", async () => {
   <div class="home">
     <!-- 3D 갤러리 (WebGL은 클라이언트 전용) -->
     <ClientOnly fallback-tag="div" fallback="갤러리를 불러오는 중...">
-      <TheGallery :entries="diaryStore.entries" />
+      <TheGallery :entries="diaryListStore.entries" />
     </ClientOnly>
 
     <!-- UI 오버레이: 갤러리 위에 떠있는 버튼들 -->
@@ -23,7 +24,7 @@ await callOnce("home:bootstrap", async () => {
       </div>
 
       <BaseEmptyState
-        v-if="diaryStore.entries.length === 0"
+        v-if="diaryListStore.entries.length === 0"
         message="아직 전시된 기록이 없습니다."
         action-text="첫 기록 남기기"
         @action="navigateTo('/write')"

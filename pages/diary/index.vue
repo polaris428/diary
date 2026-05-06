@@ -1,15 +1,16 @@
 <script setup lang="ts">
 import { computed } from 'vue';
+import { useDiaryListStore } from '~/features/diary-list/store/diaryList.store';
 
-const diaryStore = useDiaryStore();
+const diaryListStore = useDiaryListStore();
 
 const isCurrentMonth = computed(() => {
   const today = new Date();
-  return diaryStore.currentYear === today.getFullYear() && diaryStore.currentMonth === today.getMonth() + 1;
+  return diaryListStore.currentYear === today.getFullYear() && diaryListStore.currentMonth === today.getMonth() + 1;
 });
 
 await callOnce("diary:list", async () => {
-  await diaryStore.fetchEntries();
+  await diaryListStore.fetchEntries();
 });
 </script>
 
@@ -18,21 +19,21 @@ await callOnce("diary:list", async () => {
     <AppHeader title="기록" />
     <section class="panel">
       <DiaryMonthNav
-        :year="diaryStore.currentYear"
-        :month="diaryStore.currentMonth"
+        :year="diaryListStore.currentYear"
+        :month="diaryListStore.currentMonth"
         :disable-next="isCurrentMonth"
-        @prev="diaryStore.goToPreviousMonth()"
-        @next="diaryStore.goToNextMonth()"
+        @prev="diaryListStore.goToPreviousMonth()"
+        @next="diaryListStore.goToNextMonth()"
       />
       <BaseEmptyState
-        v-if="diaryStore.entries.length === 0"
+        v-if="diaryListStore.entries.length === 0"
         message="선택한 달의 기록이 없습니다."
         action-text="일기 쓰기"
         @action="navigateTo('/write')"
       />
       <div v-else class="card-list">
         <DiaryCard
-          v-for="entry in diaryStore.entries"
+          v-for="entry in diaryListStore.entries"
           :key="entry.id"
           :entry="entry"
         />

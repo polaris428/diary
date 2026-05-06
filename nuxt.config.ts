@@ -7,8 +7,20 @@ export default defineNuxtConfig({
   supabase: {
     redirect: false, // 커스텀 콜백 처리를 위해 자동 리다이렉트는 끕니다.
   },
+  components: [
+    { path: '~/shared/components/base', prefix: 'Base' },
+    { path: '~/shared/components/layout', prefix: 'App' },
+    { path: '~/features', pathPrefix: false, pattern: '*/components/**' },
+    '~/components'
+  ],
   imports: {
-    dirs: ["stores"],
+    dirs: [
+      "stores",
+      "shared/composables",
+      "shared/utils",
+      "features/*/composables",
+      "features/*/store"
+    ],
     presets: [
       {
         from: "pinia",
