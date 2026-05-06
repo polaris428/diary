@@ -3,22 +3,40 @@ import type { DiaryEntry } from '~/types';
 
 const route = useRoute();
 const { fetchEntryById } = useDiaryDetail();
-const entry = ref<DiaryEntry | null>(null);
-const isLoading = ref(true);
 
-await callOnce(`diary:detail:${route.params.id}`, async () => {
-  entry.value = await fetchEntryById(String(route.params.id));
-  isLoading.value = false;
-});
+const { data: entry, pending: isLoading } = await useAsyncData(
+  `diary:detail:${route.params.id}`,
+  () => fetchEntryById(String(route.params.id))
+);
+
+const handleEdit = () => {
+  // 실제 수정 모드 전환 또는 페이지 이동은 5번 기능에서 구현
+  window.alert("수정 기능은 곧 준비됩니다!");
+};
+
+const handleDelete = () => {
+  const isConfirmed = window.confirm("정말 삭제할까요?");
+  if (isConfirmed) {
+    // 실제 삭제 로직은 6번 기능에서 구현
+    window.alert("삭제 로직 연결 대기 중");
+  }
+};
 </script>
 
 <template>
   <div class="page">
-    <AppHeader title="상세 보기" :show-back="true" />
+    <AppHeader title="상세 보기" :show-back="true">
+      <template #right v-if="entry">
+        <div class="header-actions">
+          <BaseButton variant="ghost" size="sm" @click="handleEdit">수정</BaseButton>
+          <BaseButton variant="danger" size="sm" @click="handleDelete">삭제</BaseButton>
+        </div>
+      </template>
+    </AppHeader>
     <section class="panel" v-if="entry">
       <div class="panel__row">
         <h1>{{ entry.title }}</h1>
-        <BaseBadge :mood="entry.mood" />
+        <BaseBadge v-if="entry.mood" :mood="entry.mood" />
       </div>
       <p class="panel__date">{{ formatDiaryDate(entry.createdAt) }}</p>
       <BaseTextarea :model-value="entry.content" :readonly="true" />
@@ -61,5 +79,10 @@ await callOnce(`diary:detail:${route.params.id}`, async () => {
 
 .panel__date {
   color: var(--color-neutral-500);
+}
+
+.header-actions {
+  display: flex;
+  gap: 8px;
 }
 </style>
