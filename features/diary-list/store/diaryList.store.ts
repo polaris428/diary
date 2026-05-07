@@ -54,7 +54,7 @@ export const useDiaryListStore = defineStore("diary-list", () => {
 
     if (error) {
       console.error("fetchEntries error:", error);
-      toast.show("목록을 불러오는 중 오류가 발생했습니다.", "error");
+      toast.show("기록을 불러오지 못했어요. 새로고침 해보세요.", "error");
       return;
     }
 

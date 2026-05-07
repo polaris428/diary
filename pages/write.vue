@@ -55,7 +55,7 @@ const submit = async () => {
     isDirty.value = false; // 저장 완료 시 경고 해제
     await navigateTo("/home");
   } catch (error) {
-    toast.show("일기 저장에 실패했습니다. 내용을 확인해 주세요.", "error");
+    toast.show("저장하지 못했어요. 다시 시도해볼게요.", "error");
   } finally {
     isSubmitting.value = false;
   }

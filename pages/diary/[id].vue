@@ -54,6 +54,7 @@ const saveEdit = async () => {
     isEditMode.value = false;
   } catch (error: any) {
     console.error(error);
+    toast.show("수정하지 못했어요. 다시 시도해주세요.", "error");
   } finally {
     isSubmitting.value = false;
   }

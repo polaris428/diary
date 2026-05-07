@@ -26,7 +26,7 @@ export const useDiaryWrite = () => {
       throw new Error("일기 저장에 실패했습니다.");
     }
 
-    toast.show("일기가 저장되었습니다.", "success");
+    toast.show("기록됐어요.", "success");
     return data;
   };
 
@@ -53,7 +53,7 @@ export const useDiaryWrite = () => {
       throw new Error("일기 수정에 실패했습니다.");
     }
 
-    toast.show("일기가 수정되었습니다.", "success");
+    toast.show("수정됐어요.", "success");
     return data;
   };
 

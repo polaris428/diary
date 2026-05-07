@@ -17,7 +17,7 @@ export const useDiaryDetail = () => {
 
     if (error) {
       console.error("fetchEntryById error:", error);
-      toast.show("일기를 불러오는 중 오류가 발생했습니다.", "error");
+      toast.show("기록을 찾을 수 없어요.", "error");
       return null;
     }
 
@@ -45,11 +45,11 @@ export const useDiaryDetail = () => {
 
     if (error) {
       console.error("deleteEntry error:", error);
-      toast.show("일기 삭제에 실패했습니다.", "error");
+      toast.show("삭제하지 못했어요. 다시 시도해주세요.", "error");
       return false;
     }
 
-    toast.show("일기가 삭제되었습니다.", "success");
+    toast.show("삭제됐어요.", "success");
     return true;
   };
 
