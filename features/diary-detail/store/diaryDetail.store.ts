@@ -1,6 +1,7 @@
+import { defineStore } from "pinia";
 import type { DiaryEntry, DiaryMood } from "~/types";
 
-export const useDiaryDetail = () => {
+export const useDiaryDetailStore = defineStore("diary-detail", () => {
   const supabase = useSupabaseClient<any>();
   const user = useSupabaseUser();
   const toast = useToast();
@@ -30,7 +31,7 @@ export const useDiaryDetail = () => {
         createdAt: data.created_at as string,
       };
     }
-    
+
     return null;
   };
 
@@ -55,6 +56,6 @@ export const useDiaryDetail = () => {
 
   return {
     fetchEntryById,
-    deleteEntry
+    deleteEntry,
   };
-};
+});

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { DiaryMood } from '~/types';
 
-const { createEntry } = useDiaryWrite();
+const diaryWriteStore = useDiaryWriteStore();
 const toast = useToast();
 
 const title = ref("");
@@ -46,7 +46,7 @@ const submit = async () => {
 
   try {
     isSubmitting.value = true;
-    await createEntry({
+    await diaryWriteStore.createEntry({
       title: title.value,
       content: content.value.trim(),
       mood: selectedMood.value

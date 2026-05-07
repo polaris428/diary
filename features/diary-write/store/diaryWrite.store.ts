@@ -1,6 +1,7 @@
+import { defineStore } from "pinia";
 import type { DiaryEntry } from "~/types";
 
-export const useDiaryWrite = () => {
+export const useDiaryWriteStore = defineStore("diary-write", () => {
   const supabase = useSupabaseClient<any>();
   const user = useSupabaseUser();
   const toast = useToast();
@@ -23,7 +24,7 @@ export const useDiaryWrite = () => {
 
     if (error) {
       console.error("Supabase insert error:", error);
-      throw new Error("일기 저장에 실패했습니다.");
+      throw new Error("저장하지 못했어요. 다시 시도해볼게요.");
     }
 
     toast.show("기록됐어요.", "success");
@@ -44,13 +45,13 @@ export const useDiaryWrite = () => {
       .from("entries")
       .update(updates)
       .eq("id", id)
-      .eq("user_id", user.value.id) // RLS check, though DB handles it
+      .eq("user_id", user.value.id)
       .select()
       .single();
 
     if (error) {
       console.error("Supabase update error:", error);
-      throw new Error("일기 수정에 실패했습니다.");
+      throw new Error("수정하지 못했어요. 다시 시도해주세요.");
     }
 
     toast.show("수정됐어요.", "success");
@@ -59,6 +60,6 @@ export const useDiaryWrite = () => {
 
   return {
     createEntry,
-    updateEntry
+    updateEntry,
   };
-};
+});

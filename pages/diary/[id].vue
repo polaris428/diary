@@ -1,16 +1,14 @@
 <script setup lang="ts">
-import type { DiaryEntry, DiaryMood } from '~/types';
-import { useDiaryWrite } from '~/features/diary-write/composables/useDiaryWrite';
-import DiaryMoodPicker from '~/features/diary-write/components/DiaryMoodPicker.vue';
+import type { DiaryMood } from '~/types';
 
 const route = useRoute();
-const { fetchEntryById, deleteEntry } = useDiaryDetail();
-const { updateEntry } = useDiaryWrite();
+const diaryDetailStore = useDiaryDetailStore();
+const diaryWriteStore = useDiaryWriteStore();
 const toast = useToast();
 
 const { data: entry, pending: isLoading } = await useAsyncData(
   `diary:detail:${route.params.id}`,
-  () => fetchEntryById(String(route.params.id))
+  () => diaryDetailStore.fetchEntryById(String(route.params.id))
 );
 
 const isEditMode = ref(false);
@@ -38,7 +36,7 @@ const saveEdit = async () => {
   
   isSubmitting.value = true;
   try {
-    const updatedData = await updateEntry(String(route.params.id), {
+    const updatedData = await diaryWriteStore.updateEntry(String(route.params.id), {
       title: editTitle.value,
       content: editContent.value,
       mood: editMood.value,
@@ -71,7 +69,7 @@ const handleDelete = () => {
 const confirmDelete = async () => {
   isSubmitting.value = true;
   try {
-    const success = await deleteEntry(String(route.params.id));
+    const success = await diaryDetailStore.deleteEntry(String(route.params.id));
     if (success) {
       navigateTo('/diary');
     }
