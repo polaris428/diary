@@ -6,7 +6,7 @@
 | --- | --- | --- | --- |
 | `id` | UUID | PK, `DEFAULT gen_random_uuid()` | 고유 식별자 |
 | `user_id` | UUID | `NOT NULL`, FK → `auth.users.id ON DELETE CASCADE` | 소유자 |
-| `title` | TEXT | NULLABLE | 일기 제목 |
+| `title` | TEXT | `NOT NULL` | 일기 제목 |
 | `content` | TEXT | `NOT NULL`, 길이 ≤ 5000 | 일기 본문 |
 | `mood` | TEXT | NULLABLE, enum 6개 | 감정 값 |
 | `created_at` | TIMESTAMPTZ | `NOT NULL`, `DEFAULT now()` | 작성 시각 |
@@ -34,7 +34,7 @@
 
 | 항목 | 결정 |
 | --- | --- |
-| `updated_at` 자동 갱신 | DB 트리거 또는 Store 액션 내 명시 설정 중 택1 |
+| `updated_at` 자동 갱신 | DB 트리거(`set_updated_at` → `update_updated_at_column()`)로 자동 갱신 확정 |
 | content 전문검색 인덱스 (GIN) | Phase 2 |
 | tags 테이블 | Phase 2 |
 | auth.users 삭제 | Phase 2 |
