@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { DiaryEntry } from '~/types';
 defineProps<{
   entry: DiaryEntry;
 }>();

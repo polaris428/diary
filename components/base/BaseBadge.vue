@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { DiaryMood } from '~/types';
 const props = defineProps<{
   mood: DiaryMood | null;
 }>();
