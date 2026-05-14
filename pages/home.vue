@@ -7,20 +7,23 @@ const diaryListStore = useDiaryListStore();
 await useAsyncData("home:latest", async () => {
   await diaryListStore.fetchLatestEntries();
 });
+
+const onDive = (id: string | number) => {
+  // 2D 다이브 UX: 클릭 시 상세 페이지로 부드럽게 이동
+  navigateTo(`/diary/${id}`)
+}
 </script>
 
 <template>
   <div class="home">
-    <!-- 3D 갤러리 (WebGL은 클라이언트 전용) -->
-    <ClientOnly fallback-tag="div" fallback="갤러리를 불러오는 중...">
-      <TheGallery :entries="diaryListStore.latestEntries" />
-    </ClientOnly>
+    <!-- 2D 갤러리 뷰 -->
+    <TheGallery :entries="diaryListStore.latestEntries" @dive="onDive" />
 
     <!-- UI 오버레이: 갤러리 위에 떠있는 버튼들 -->
     <div class="ui-overlay">
       <div class="ui-overlay__header">
         <h1 class="ui-overlay__title">The Frame</h1>
-        <p class="ui-overlay__hint">드래그하여 공간을 둘러보세요.</p>
+        <p class="ui-overlay__hint">자유롭게 스크롤하여 갤러리를 감상하세요.</p>
       </div>
 
       <BaseEmptyState

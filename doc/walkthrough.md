@@ -1,6 +1,6 @@
 # HAU Diary 서비스 워크스루 (Visual Walkthrough)
 
-> 최종 업데이트: 2026-05-07  
+> 최종 업데이트: 2026-05-14
 > 목적: 현재 프로젝트의 시각적 구현 상태 및 기능 동작 확인
 
 ---
@@ -10,9 +10,14 @@
 ### 🖼️ 로그인 페이지 (Landing)
 ![로그인 페이지](../public/assets/walkthrough/landing_page.png)
 
-- **디자인 컨셉**: Modern White Cube (미술관 갤러리 테마)
+- **디자인 컨셉**: 프리미엄 2D 갤러리 월 테마
 - **주요 기능**: Google OAuth 인증 버튼
 - **상태**: 구현 완료 (Supabase Auth 연동)
+
+### 🎨 홈 화면 (2D 갤러리 월) — *신규 적용*
+- **기능**: 사용자의 일기가 상대 좌표 기반(Relative Coordinate Model)의 2D 살롱 스타일로 배치됨.
+- **인터랙션**: CSS Transform 기반의 부드러운 스크롤 및 프레임 Hover 줌(Zoom) 효과. 클릭 시 상세 일기로 다이브(Dive).
+- **상태**: 3D(TresJS)에서 2D 렌더링으로 전환 완료. 모바일 최적화 및 커스텀 확장성 확보.
 
 ### 📂 일기 목록 (Diary List) — *진행 중*
 - **기능**: 월별 네비게이션, 감정 배지가 포함된 카드 리스트

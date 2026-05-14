@@ -1,9 +1,8 @@
 <script setup lang="ts">
 /**
  * TheGallery.vue
- * TresJS 캔버스와 전시관 환경, 조명, 액자 목록을 총괄하는 컴포넌트
+ * 2D 갤러리 환경 및 액자 목록을 총괄하는 컨테이너
  */
-import { OrbitControls } from '@tresjs/cientos'
 import BaseFrame from '~/components/base/BaseFrame.vue'
 import { useGalleryLayout, type GalleryItem } from '~/features/gallery/composables/useGalleryLayout'
 import type { DiaryEntry } from '~/types'
@@ -12,7 +11,11 @@ const props = defineProps<{
   entries: DiaryEntry[]
 }>()
 
-// DiaryEntry → GalleryItem 변환 (mood에서 frameType, canvasColor 추출)
+const emit = defineEmits<{
+  (e: 'dive', entryId: string | number): void
+}>()
+
+// DiaryEntry → GalleryItem 변환
 const toGalleryItem = (entry: DiaryEntry): GalleryItem => {
   const meta = getMoodMeta(entry.mood)
   return {
@@ -26,41 +29,26 @@ const toGalleryItem = (entry: DiaryEntry): GalleryItem => {
 
 const { calculateLayout } = useGalleryLayout()
 const placedItems = computed(() => calculateLayout(props.entries.map(toGalleryItem)))
+
+const handleDive = (id: string | number) => {
+  emit('dive', id)
+}
 </script>
 
 <template>
   <div class="gallery-container">
-    <TresCanvas clear-color="#ffffff" shadows alpha window-size>
-      <TresPerspectiveCamera :position="[0, 3, 10]" :look-at="[0, 3, 0]" />
-      
-      <OrbitControls />
-
-      <!-- Lighting: 조명 정책 반영 -->
-      <TresAmbientLight :intensity="0.6" />
-      <TresDirectionalLight :position="[2, 8, 4]" :intensity="1.2" cast-shadow />
-
-      <!-- Floor: 매끄러운 반사 바닥 -->
-      <TresMesh :rotation="[-Math.PI / 2, 0, 0]" receive-shadow>
-        <TresPlaneGeometry :args="[40, 40]" />
-        <TresMeshStandardMaterial color="#fdfdfd" :roughness="0.1" :metalness="0.1" />
-      </TresMesh>
-
-      <!-- Wall: 정제된 화이트 큐브 전시벽 -->
-      <TresMesh :position="[0, 5, -5]" receive-shadow>
-        <TresBoxGeometry :args="[40, 15, 0.5]" />
-        <TresMeshStandardMaterial color="#ffffff" />
-      </TresMesh>
-
+    <div class="gallery-wall">
       <!-- Frames: 감정 스타일이 적용된 실제 일기 데이터 렌더링 -->
       <BaseFrame
         v-for="item in placedItems"
         :key="item.id"
-        :position="item.position"
+        :position-style="item.style"
         :type="item.type"
         :thumbnail="item.thumbnail"
         :canvas-color="item.canvasColor"
+        @click="handleDive(item.id)"
       />
-    </TresCanvas>
+    </div>
   </div>
 </template>
 
@@ -69,6 +57,26 @@ const placedItems = computed(() => calculateLayout(props.entries.map(toGalleryIt
   width: 100%;
   height: 100vh;
   position: relative;
-  background-color: #ffffff;
+  background-color: var(--color-gallery-wall, #ffffff);
+  overflow-x: hidden;
+  overflow-y: auto; /* 스크롤 가능하도록 설정 */
+  perspective: 1000px; /* Dive UX를 위한 원근감 설정 */
+}
+
+.gallery-wall {
+  width: 100%;
+  min-height: 200vh; /* 임시 높이: 아이템 개수에 따라 동적 조정 가능 */
+  position: relative;
+  padding: 40px 20px;
+  box-sizing: border-box;
+}
+
+/* 스크롤바 숨기기 (선택적) */
+.gallery-container::-webkit-scrollbar {
+  display: none;
+}
+.gallery-container {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }
 </style>
