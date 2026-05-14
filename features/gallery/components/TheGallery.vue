@@ -97,6 +97,9 @@ onUnmounted(() => {
   padding: 0;
   box-sizing: border-box;
   
+  /* 벽면 상단에 은은한 조명 효과 (깊이감 부여) */
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.03) 0%, rgba(255, 255, 255, 0) 15vh);
+  
   /* 바닥 라인 (공간감 연출) */
   border-bottom: 2vh solid #f5f5f5;
   box-shadow: inset 0 -20px 40px rgba(0,0,0,0.02);
