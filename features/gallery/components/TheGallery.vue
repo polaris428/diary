@@ -8,6 +8,8 @@ import BaseFrame from '~/components/base/BaseFrame.vue'
 import { useGalleryLayout, type GalleryItem } from '~/features/gallery/composables/useGalleryLayout'
 import type { DiaryEntry } from '~/types'
 
+import gsap from 'gsap'
+
 const props = defineProps<{
   entries: DiaryEntry[]
 }>()
@@ -37,23 +39,38 @@ const handleDive = (id: string | number) => {
   emit('dive', id)
 }
 
-// 가로 마우스 휠 스크롤 지원
+// 가로 마우스 휠 스크롤 지원 (GSAP을 활용한 프리미엄 관성 스크롤)
 const containerRef = ref<HTMLElement | null>(null)
 
 const onWheel = (e: WheelEvent) => {
   if (!containerRef.value) return
-  // 세로 스크롤(deltaY) 발생 시 가로 스크롤로 변환
+  
   if (e.deltaY !== 0 && e.deltaX === 0) {
     e.preventDefault()
-    containerRef.value.scrollLeft += e.deltaY * 1.5 // 스크롤 속도 조절
+    
+    // 현재 위치에서 휠 회전량만큼 목표치 설정
+    const targetScroll = containerRef.value.scrollLeft + (e.deltaY * 1.5)
+    
+    // GSAP으로 부드러운 가감속(Ease) 적용
+    gsap.to(containerRef.value, {
+      scrollLeft: targetScroll,
+      duration: 0.5,
+      ease: 'power2.out',
+      overwrite: 'auto'
+    })
   }
 }
 
-// 스크롤 시 상태 방출 (힌트 텍스트 페이드아웃용)
+// 스크롤 시 상태 방출 (상태가 변할 때만 딱 한 번씩만 방출하도록 최적화)
+let lastIsScrolled = false;
 const onScroll = (e: Event) => {
   const target = e.target as HTMLElement;
-  // 스크롤이 10px 이상 되면 isScrolled: true 방출
-  emit('scroll', target.scrollLeft > 10);
+  const currentScrolled = target.scrollLeft > 15;
+  
+  if (currentScrolled !== lastIsScrolled) {
+    lastIsScrolled = currentScrolled;
+    emit('scroll', currentScrolled);
+  }
 }
 
 onMounted(() => {
@@ -91,26 +108,26 @@ onUnmounted(() => {
   width: 100%;
   height: 100vh;
   position: relative;
-  background-color: #faf9f8; /* 쨍한 흰색 대신 눈이 편안한 웜 화이트(오프화이트) */
+  background-color: #faf9f8;
   overflow-x: auto;
-  overflow-y: hidden; /* 세로 스크롤 금지 */
+  overflow-y: hidden;
   perspective: 1000px;
-  scroll-behavior: smooth;
+  /* scroll-behavior: smooth; -> 휠 조작 시 무거움을 유발하므로 제거하거나 신중히 사용 */
+  -webkit-overflow-scrolling: touch; /* iOS 가속 스크롤 */
 }
 
 .gallery-wall {
   height: 100vh;
-  min-width: 100vw; /* 기본적으로 화면 너비만큼은 보장 */
+  min-width: 100vw;
   position: relative;
   padding: 0;
   box-sizing: border-box;
+  will-change: transform; /* 하드웨어 가속 유도 */
   
-  /* 벽면 상단에 은은한 조명 효과 (깊이감 부여) */
   background: linear-gradient(to bottom, rgba(0, 0, 0, 0.04) 0%, rgba(255, 255, 255, 0) 25vh);
   
-  /* 바닥 라인 (공간감 연출) */
-  border-bottom: 3vh solid #f0eee9; /* 바닥 색상도 벽에 맞춰 약간 웜톤으로 */
-  box-shadow: inset 0 -30px 60px rgba(0,0,0,0.03); /* 깊이감 강화 */
+  border-bottom: 3vh solid #f0eee9;
+  box-shadow: inset 0 -30px 60px rgba(0,0,0,0.03);
 }
 
 /* 스크롤바 커스텀 (미술관 느낌을 살려 아주 얇고 우아하게) */
