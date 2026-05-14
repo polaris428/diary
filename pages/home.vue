@@ -42,18 +42,26 @@ const onDive = (id: string | number) => {
 
 <style scoped>
 .home {
-  position: relative;
-  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
   height: 100vh;
-  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  background-color: #ffffff;
+  z-index: 0;
 }
 
 .ui-overlay {
   position: absolute;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   pointer-events: none;
   z-index: 10;
-  padding: 32px;
+  padding: 32px 20px 100px; /* 하단 네비게이션 공간 고려 */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -87,20 +95,20 @@ const onDive = (id: string | number) => {
   width: 56px;
   height: 56px;
   border-radius: 50%;
-  background: var(--color-primary-900);
+  background: var(--color-primary-900, #121212);
   color: #fff;
   font-size: 1.75rem;
   line-height: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   text-decoration: none;
 }
 
 .fab:hover {
   transform: scale(1.08);
-  box-shadow: 0 18px 36px rgba(75, 46, 31, 0.22);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
 }
 </style>
