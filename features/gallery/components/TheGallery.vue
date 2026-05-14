@@ -14,6 +14,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: 'dive', entryId: string | number): void
+  (e: 'scroll', isScrolled: boolean): void
 }>()
 
 // DiaryEntry → GalleryItem 변환
@@ -48,6 +49,13 @@ const onWheel = (e: WheelEvent) => {
   }
 }
 
+// 스크롤 시 상태 방출 (힌트 텍스트 페이드아웃용)
+const onScroll = (e: Event) => {
+  const target = e.target as HTMLElement;
+  // 스크롤이 10px 이상 되면 isScrolled: true 방출
+  emit('scroll', target.scrollLeft > 10);
+}
+
 onMounted(() => {
   if (containerRef.value) {
     containerRef.value.addEventListener('wheel', onWheel, { passive: false })
@@ -62,7 +70,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="gallery-container" ref="containerRef">
+  <div class="gallery-container" ref="containerRef" @scroll="onScroll">
     <div class="gallery-wall" :style="{ width: layoutData.wallWidth }">
       <!-- Frames: 감정 스타일이 적용된 실제 일기 데이터 렌더링 -->
       <BaseFrame
@@ -83,7 +91,7 @@ onUnmounted(() => {
   width: 100%;
   height: 100vh;
   position: relative;
-  background-color: var(--color-gallery-wall, #ffffff);
+  background-color: #faf9f8; /* 쨍한 흰색 대신 눈이 편안한 웜 화이트(오프화이트) */
   overflow-x: auto;
   overflow-y: hidden; /* 세로 스크롤 금지 */
   perspective: 1000px;
@@ -98,11 +106,11 @@ onUnmounted(() => {
   box-sizing: border-box;
   
   /* 벽면 상단에 은은한 조명 효과 (깊이감 부여) */
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.03) 0%, rgba(255, 255, 255, 0) 15vh);
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.04) 0%, rgba(255, 255, 255, 0) 25vh);
   
   /* 바닥 라인 (공간감 연출) */
-  border-bottom: 2vh solid #f5f5f5;
-  box-shadow: inset 0 -20px 40px rgba(0,0,0,0.02);
+  border-bottom: 3vh solid #f0eee9; /* 바닥 색상도 벽에 맞춰 약간 웜톤으로 */
+  box-shadow: inset 0 -30px 60px rgba(0,0,0,0.03); /* 깊이감 강화 */
 }
 
 /* 스크롤바 커스텀 (미술관 느낌을 살려 아주 얇고 우아하게) */

@@ -1,6 +1,7 @@
 /**
  * useGalleryLayout.ts
- * 2D 커스텀 월(Custom Wall) 가로 스크롤(Horizontal Scroll) 살롱 행 배치 알고리즘
+ * 2D 커스텀 월 가로 스크롤 살롱 행 배치 알고리즘
+ * 향후 커스텀 패턴 확장을 위해 패턴 정의를 분리했습니다.
  */
 import type { DiaryMood } from '~/types'
 
@@ -24,29 +25,45 @@ export interface PlacedItem extends GalleryItem {
   }
 }
 
+// 향후 커스텀 패턴 구성을 위한 인터페이스
+export interface FramePattern {
+  h: number; // height (vh)
+  t: number; // top (vh)
+  x: number; // block 내 가로 오프셋 (vh)
+}
+
+export interface GalleryPattern {
+  name: string;
+  blockWidthVH: number;
+  frames: FramePattern[];
+}
+
+// 기본 제공되는 '살롱 행' 패턴 (세로 공간을 충분히 활용하도록 밸런스 조정)
+export const DEFAULT_PATTERN: GalleryPattern = {
+  name: 'Default Salon',
+  blockWidthVH: 110, // 블록 간 간격 확대
+  frames: [
+    { h: 45, t: 18, x: 0 },   // [0] 큰 액자 (좌측 중앙)
+    { h: 28, t: 12, x: 42 },  // [1] 작은 액자 (우측 상단)
+    { h: 28, t: 45, x: 42 },  // [2] 작은 액자 (우측 하단)
+    { h: 36, t: 28, x: 74 },  // [3] 중간 액자 (조금 더 우측 중앙)
+  ]
+}
+
 export const useGalleryLayout = () => {
   const FRAME_TYPES = ['Classic Gold', 'Modern Black', 'Natural Wood', 'Floating Glass'] as const
 
-  const calculateLayout = (items: GalleryItem[]) => {
-    // 2열(위/아래) 구조로 가로로 길게 배치
-    const itemsPerColumn = 2;
-
+  const calculateLayout = (items: GalleryItem[], patternConfig: GalleryPattern = DEFAULT_PATTERN) => {
+    // 시작 여백 (타이틀 제거 후, 적당한 여백으로 조정)
+    const startPaddingVW = 15; 
+    
     const placedItems = items.map((item, index) => {
-      const col = Math.floor(index / itemsPerColumn);
-      const row = index % itemsPerColumn;
+      const blockIndex = Math.floor(index / patternConfig.frames.length);
+      const patternIndex = index % patternConfig.frames.length;
+      const pattern = patternConfig.frames[patternIndex];
       
-      // 화면의 세로(vh)를 기준으로 모든 크기를 계산하여 절대 겹치지 않도록 방어
-      // 높이가 고정(vh)되면, aspect-ratio(3/4)에 의해 가로 길이도 vh 비율로 고정됨.
-      const frameHeightVH = 35; // 액자 높이 35vh (화면의 35%)
-      
-      // 위쪽 행(row 0)은 10vh에서 시작, 아래쪽 행(row 1)은 50vh에서 시작
-      // -> Row 0은 10~45vh 차지, Row 1은 50~85vh 차지. (5vh 간격 보장)
-      // 하단 네비게이션 바를 위한 여백 15vh (85~100vh) 보장.
-      const baseTop = row === 0 ? 10 : 50; 
-      
-      // 액자 가로폭은 35vh * (3/4) = 26.25vh. 컬럼 간격은 32vh로 주어 가로로도 절대 겹치지 않음.
-      const baseLeftVH = col * 32; 
-      const startPaddingVW = 10; // 첫 시작 여백 10vw
+      // 해당 액자의 절대 가로 위치 = 블록 시작점 + 패턴 내 오프셋
+      const baseLeftVH = blockIndex * patternConfig.blockWidthVH + pattern.x;
       
       const type = item.type || FRAME_TYPES[Math.floor(Math.random() * FRAME_TYPES.length)];
       
@@ -55,19 +72,19 @@ export const useGalleryLayout = () => {
         type,
         style: {
           left: `calc(${startPaddingVW}vw + ${baseLeftVH}vh)`,
-          top: `${baseTop}vh`,
-          height: `${frameHeightVH}vh`,
-          width: 'auto', // 높이에 맞춰 자동 비율 조정
+          top: `${pattern.t}vh`,
+          height: `${pattern.h}vh`,
+          width: 'auto', 
           aspectRatio: '3/4',
-          transform: `none`, // transform 제거하여 기준점 충돌 방지
+          transform: `none`, 
           zIndex: 1,
         }
       } as PlacedItem
     })
 
-    const totalColumns = Math.ceil(items.length / itemsPerColumn);
-    // 전체 너비 = 컬럼 수 * 32vh + 좌우 여백(20vw)
-    const wallWidth = `calc(${totalColumns * 32}vh + 20vw)`;
+    // 전체 너비 계산
+    const totalBlocks = Math.ceil(items.length / patternConfig.frames.length);
+    const wallWidth = `calc(${totalBlocks * patternConfig.blockWidthVH}vh + 30vw)`;
 
     return {
       items: placedItems,
